@@ -212,3 +212,30 @@
     transform: translateY(-50%);
     color: #7d5fff;
   }
+
+  .switch-user-btn {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #4a6fa5;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+  }
+  
+  .switch-user-btn:hover {
+    background-color: #3a5a8f;
+  }
+  
+  .user-profile {
+    /* Ajoutez ceci pour garder une bonne disposition */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #3d4f66;
+    margin-bottom: 1rem;
+  }

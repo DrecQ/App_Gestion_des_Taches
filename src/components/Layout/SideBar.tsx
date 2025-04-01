@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './TodoApp.css';
 
 interface Todo {
@@ -9,6 +10,8 @@ interface Todo {
 }
 
 const TodoApp = () => {
+  const navigate = useNavigate();
+  
   const [user] = useState({
     name: 'Jean Dupont',
     email: 'jean.dupont@example.com'
@@ -18,6 +21,10 @@ const TodoApp = () => {
   const [newTodo, setNewTodo] = useState('');
   const [activeMenu, setActiveMenu] = useState('today');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const switchUser = () => {
+    navigate('/login');
+  };
 
   const filteredTodos = todos.filter(todo => {
     switch(activeMenu) {
@@ -62,6 +69,12 @@ const TodoApp = () => {
           <div className="user-avatar">👤</div>
           <h3>{user.name}</h3>
           <p>{user.email}</p>
+          <button 
+            onClick={switchUser}
+            className="switch-user-btn"
+          >
+            Changer de compte
+          </button>
         </div>
 
         <nav className="sidebar-menu">
