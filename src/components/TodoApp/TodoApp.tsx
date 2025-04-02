@@ -108,11 +108,11 @@ const TodoApp = () => {
     <div className="todo-app-container">
       <aside className="sidebar">
         <div className="user-profile">
-          <div className="user-avatar">👤</div>
+          <div className="user-avatar"><i className="fas fa-user-circle"></i></div>
           <h3>{user.name}</h3>
           <p>{user.email}</p>
           <button onClick={handleLogout} className="logout-btn">
-            Déconnexion
+            <i className="fas fa-sign-out-alt"></i> Déconnexion
           </button>
         </div>
 
@@ -121,7 +121,7 @@ const TodoApp = () => {
             onClick={() => setActiveMenu('today')} 
             className={`menu-item ${activeMenu === 'today' ? 'active' : ''}`}
           >
-            <span className="menu-icon">☀️</span>
+            <span className="menu-icon"><i className="fas fa-sun"></i></span>
             <span>Ma journée</span>
           </button>
           
@@ -129,7 +129,7 @@ const TodoApp = () => {
             onClick={() => setActiveMenu('planned')} 
             className={`menu-item ${activeMenu === 'planned' ? 'active' : ''}`}
           >
-            <span className="menu-icon">📅</span>
+            <span className="menu-icon"><i className="fas fa-calendar-alt"></i></span>
             <span>Planifié</span>
           </button>
           
@@ -137,7 +137,7 @@ const TodoApp = () => {
             onClick={() => setActiveMenu('important')} 
             className={`menu-item ${activeMenu === 'important' ? 'active' : ''}`}
           >
-            <span className="menu-icon">⭐</span>
+            <span className="menu-icon"><i className="fas fa-star"></i></span>
             <span>Important</span>
           </button>
           
@@ -145,7 +145,7 @@ const TodoApp = () => {
             onClick={() => setActiveMenu('completed')} 
             className={`menu-item ${activeMenu === 'completed' ? 'active' : ''}`}
           >
-            <span className="menu-icon">✓</span>
+            <span className="menu-icon"><i className="fas fa-check-circle"></i></span>
             <span>Terminées</span>
           </button>
         </nav>
@@ -187,7 +187,7 @@ const TodoApp = () => {
                   />
                 </div>
               )}
-              <span className="note-icon">✏️</span>
+              <span className="note-icon"><i className="fas fa-pencil-alt"></i></span>
             </div>
           )}
 
@@ -207,10 +207,12 @@ const TodoApp = () => {
                   <span className="todo-text">{todo.text}</span>
                   {(todo.dueDate || todo.dueTime) && (
                     <span className="due-datetime">
-                      📅 {todo.dueDate && new Date(todo.dueDate).toLocaleDateString()}
+                      <i className="fas fa-calendar-alt datetime-icon"></i>
+                      {todo.dueDate && new Date(todo.dueDate).toLocaleDateString()}
                       {todo.dueTime && (
                         <>
-                          🕒 {todo.dueTime}
+                          <i className="fas fa-clock datetime-icon"></i>
+                          {todo.dueTime}
                         </>
                       )}
                     </span>
@@ -224,7 +226,11 @@ const TodoApp = () => {
                       toggleImportant(todo.id);
                     }}
                   >
-                    {todo.important ? '★' : '☆'}
+                    {todo.important ? (
+                      <i className="fas fa-star star-icon"></i>
+                    ) : (
+                      <i className="far fa-star star-icon"></i>
+                    )}
                   </button>
                   <button 
                     className="delete-btn"
@@ -233,7 +239,7 @@ const TodoApp = () => {
                       deleteTodo(todo.id);
                     }}
                   >
-                    🗑️
+                    <i className="fas fa-trash-alt trash-icon"></i>
                   </button>
                 </div>
               </li>
@@ -244,7 +250,7 @@ const TodoApp = () => {
             <span>{filteredTodos.length} tâche(s)</span>
             {activeMenu === 'completed' && filteredTodos.length > 0 && (
               <button className="clear-btn" onClick={clearCompleted}>
-                Effacer toutes les tâches terminées
+                <i className="fas fa-trash"></i> Effacer toutes les tâches terminées
               </button>
             )}
           </div>
