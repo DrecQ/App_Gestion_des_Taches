@@ -1,9 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
-import TodoApp from './components/Layout/SideBar';
-import Home from './components/Layout/Home';
+
 import Login from './components/Auth/Login';
+import TodoApp from './components/TodoApp/TodoApp';
+import Register from './components/Register/Register';
 
 const App = () => {
   return (
@@ -13,10 +14,10 @@ const App = () => {
           <Route path="/" element={
             <>
               <TodoApp />
-              <Home />
             </>
           } />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Routes>
       </div>
     </Router>
