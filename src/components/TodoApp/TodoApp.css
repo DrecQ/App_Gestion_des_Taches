@@ -325,3 +325,78 @@
 .clear-btn .fa-trash {
   margin-right: 0.5rem;
 }
+
+/* Styles pour les nouveaux éléments */
+.schedule-btn, .add-btn {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(106, 90, 205, 0.2);
+  color: var(--accent-color);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.schedule-btn:hover, .add-btn:hover {
+  background: rgba(106, 90, 205, 0.3);
+}
+
+.schedule-btn i, .add-btn i {
+  margin-right: 5px;
+}
+
+.datetime-picker-container {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--card-bg);
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 10px;
+  z-index: 10;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-color);
+}
+
+.datetime-inputs {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.input-group {
+  flex: 1;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+  color: rgba(230, 230, 250, 0.8);
+}
+
+.confirm-schedule-btn {
+  width: 100%;
+  padding: 10px;
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.confirm-schedule-btn:hover {
+  background: #7d5fff;
+}
+
+.confirm-schedule-btn:disabled {
+  background: #555;
+  cursor: not-allowed;
+}

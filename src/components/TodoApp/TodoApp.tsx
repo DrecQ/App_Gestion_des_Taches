@@ -161,36 +161,48 @@ const TodoApp = () => {
           </h2>
 
           {activeMenu !== 'completed' && (
-            <div className="input-field">
-              <textarea
-                ref={textareaRef}
-                value={newTodo}
-                onChange={(e) => setNewTodo(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleAddTodo()}
-                placeholder="Entrez votre nouvelle tâche"
-                rows={1}
-              />
-              {activeMenu === 'planned' && (
-                <div className="datetime-inputs">
-                  <input
-                    type="date"
-                    value={dueDate}
-                    onChange={(e) => setDueDate(e.target.value)}
-                    className="date-input"
-                    min={new Date().toISOString().split('T')[0]}
-                  />
-                  <input
-                    type="time"
-                    value={dueTime}
-                    onChange={(e) => setDueTime(e.target.value)}
-                    className="time-input"
-                  />
-                </div>
-              )}
-              <span className="note-icon"><i className="fas fa-pencil-alt"></i></span>
-            </div>
-          )}
+  <div className="input-field">
+    <div className="input-container">
+      <textarea
+        ref={textareaRef}
+        value={newTodo}
+        onChange={(e) => setNewTodo(e.target.value)}
+        onKeyDown={(e) => e.key === 'Enter' && handleAddTodo()}
+        placeholder="Entrez votre nouvelle tâche"
+        rows={1}
+      />
+      <span className="note-icon">
+        <i className="fas fa-pencil-alt"></i>
+      </span>
+    </div>
 
+    {activeMenu === 'planned' && (
+      <div className="datetime-inputs">
+        <input
+          type="date"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+          className="date-input"
+          min={new Date().toISOString().split('T')[0]}
+        />
+        <input
+          type="time"
+          value={dueTime}
+          onChange={(e) => setDueTime(e.target.value)}
+          className="time-input"
+        />
+      </div>
+    )}
+
+    <button 
+      className="add-task-btn"
+      onClick={handleAddTodo}
+      disabled={!newTodo.trim()}
+    >
+      <i className="fas fa-plus"></i> Ajouter
+    </button>
+  </div>
+)}
           <ul className="todo-list">
             {filteredTodos.map(todo => (
               <li 
@@ -261,3 +273,4 @@ const TodoApp = () => {
 };
 
 export default TodoApp;
+
