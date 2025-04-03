@@ -10,8 +10,8 @@ interface Todo {
 
 const TodoApp = () => {
   const [user] = useState({
-    name: 'Jean Dupont',
-    email: 'jean.dupont@example.com'
+    name: 'ismaila',
+    email: 'bios.com'
   });
 
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -20,7 +20,7 @@ const TodoApp = () => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const filteredTodos = todos.filter(todo => {
-    switch(activeMenu) {
+    switch (activeMenu) {
       case 'important': return todo.important;
       case 'completed': return todo.completed;
       default: return !todo.completed;
@@ -40,13 +40,13 @@ const TodoApp = () => {
   };
 
   const toggleTodo = (id: number) => {
-    setTodos(todos.map(todo => 
+    setTodos(todos.map(todo =>
       todo.id === id ? { ...todo, completed: !todo.completed } : todo
     ));
   };
 
   const toggleImportant = (id: number) => {
-    setTodos(todos.map(todo => 
+    setTodos(todos.map(todo =>
       todo.id === id ? { ...todo, important: !todo.important } : todo
     ));
   };
@@ -65,24 +65,24 @@ const TodoApp = () => {
         </div>
 
         <nav className="sidebar-menu">
-          <button 
-            onClick={() => setActiveMenu('today')} 
+          <button
+            onClick={() => setActiveMenu('today')}
             className={`menu-item ${activeMenu === 'today' ? 'active' : ''}`}
           >
             <span className="menu-icon">☀️</span>
             <span>Ma journée</span>
           </button>
-          
-          <button 
-            onClick={() => setActiveMenu('important')} 
+
+          <button
+            onClick={() => setActiveMenu('important')}
             className={`menu-item ${activeMenu === 'important' ? 'active' : ''}`}
           >
             <span className="menu-icon">⭐</span>
             <span>Important</span>
           </button>
-          
-          <button 
-            onClick={() => setActiveMenu('completed')} 
+
+          <button
+            onClick={() => setActiveMenu('completed')}
             className={`menu-item ${activeMenu === 'completed' ? 'active' : ''}`}
           >
             <span className="menu-icon">✓</span>
@@ -113,19 +113,19 @@ const TodoApp = () => {
 
           <ul className="todo-list">
             {filteredTodos.map(todo => (
-              <li 
-                key={todo.id} 
+              <li
+                key={todo.id}
                 className={`todo-item ${todo.completed ? 'completed' : ''}`}
               >
                 <div className="todo-content" onClick={() => toggleTodo(todo.id)}>
-                  <input 
-                    type="checkbox" 
-                    checked={todo.completed} 
-                    onChange={() => {}} 
+                  <input
+                    type="checkbox"
+                    checked={todo.completed}
+                    onChange={() => { }}
                   />
                   <span>{todo.text}</span>
                 </div>
-                <button 
+                <button
                   className={`importance-btn ${todo.important ? 'important' : ''}`}
                   onClick={() => toggleImportant(todo.id)}
                 >
