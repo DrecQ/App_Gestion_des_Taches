@@ -6,6 +6,13 @@ import { getAnalytics } from "firebase/analytics";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
     apiKey: "AIzaSyD1FwfnwuzneaQ9ZLpfVaIB6l6Chcjkuqg",
     authDomain: "gestion-tache-d0969.firebaseapp.com",
@@ -25,7 +32,7 @@ const messaging = getMessaging();
 export const requestForToken = () => {
     // The method getToken(): Promise<string> allows FCM to use the VAPID key credential
     // when sending message requests to different push services
-    return getToken(messaging, { vapidKey: `YOUR_VAPID_KEY` }) //to authorize send requests to supported web push services
+    return getToken(messaging, { vapidKey: `BO1x0u12HcZN7SBK3p11gtMYOa7HmwyA8Wjwl8sgu_AF8EkO6zRTNOJzPFYp20Ewss3OdNskszr111MeuA1m0mc` }) //to authorize send requests to supported web push services
         .then((currentToken) => {
             if (currentToken) {
                 console.log('current token for client: ', currentToken);
