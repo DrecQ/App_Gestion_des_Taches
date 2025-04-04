@@ -5,6 +5,7 @@ import './App.css';
 import Login from './components/Auth/Login';
 import TodoApp from './components/TodoApp/TodoApp';
 import Register from './components/Register/Register';
+import Notification from './components/Notification/Notification';
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
           <Route path="/" element={
             <>
               <TodoApp />
+              <Notification />
             </>
           } />
           <Route path="/login" element={<Login />} />

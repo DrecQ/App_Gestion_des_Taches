@@ -18,6 +18,7 @@ const TodoApp = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [inputError, setInputError] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Chargement des données
@@ -111,12 +112,12 @@ const TodoApp = () => {
       setInputError("Veuillez saisir une tâche");
       return;
     }
-  
+
     if (activeMenu === 'planned' && !dueDate) {
       setInputError("Veuillez sélectionner au moins une date");
       return;
     }
-  
+
     if (user) {
       const newTask: Todo = {
         id: Date.now(),
@@ -246,7 +247,6 @@ const TodoApp = () => {
 
   return (
     <div className="todo-app-container">
-      {/* Bouton hamburger pour mobile */}
       <button 
         className="hamburger-menu"
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -351,45 +351,58 @@ const TodoApp = () => {
             {activeMenu === 'completed' && 'Tâches terminées'}
           </h2>
 
-          const handleAddTodo = () => {
-  if (!newTodo.trim()) {
-    setInputError("Veuillez saisir une tâche");
-    return;
-  }
+          {activeMenu !== 'completed' && (
+            <div className="input-field">
+              <div className="input-container">
+                <textarea
+                  ref={textareaRef}
+                  value={newTodo}
+                  onChange={(e) => {
+                    setNewTodo(e.target.value);
+                    setInputError(null);
+                  }}
+                  onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleAddTodo()}
+                  placeholder="Entrez votre nouvelle tâche"
+                  rows={1}
+                  className={inputError ? 'error' : ''}
+                />
+                <button 
+                  onClick={handleAddTodo}
+                  disabled={!newTodo.trim()}
+                  className="add-button"
+                  title="Ajouter la tâche"
+                >
+                  <i className="fas fa-plus"></i>
+                </button>
+              </div>
 
-  if (activeMenu === 'planned' && !dueDate) {
-    setInputError("Veuillez sélectionner au moins une date");
-    return;
-  }
+              {activeMenu === 'planned' && (
+                <div className="datetime-fields">
+                  <input
+                    type="date"
+                    value={dueDate}
+                    onChange={(e) => {
+                      setDueDate(e.target.value);
+                      setInputError(null);
+                    }}
+                    className={`date-input ${inputError ? 'error' : ''}`}
+                    min={new Date().toISOString().split('T')[0]}
+                  />
+                  <input
+                    type="time"
+                    value={dueTime}
+                    onChange={(e) => {
+                      setDueTime(e.target.value);
+                      setInputError(null);
+                    }}
+                    className="time-input"
+                  />
+                </div>
+              )}
+              {inputError && <div className="error-message">{inputError}</div>}
+            </div>
+          )}
 
-  if (user) {
-    const newTask: Todo = {
-      id: Date.now(),
-      text: newTodo,
-      completed: false,
-      important: false,
-      addedBy: user.email,
-      createdAt: Date.now()
-    };
-    
-    if (activeMenu === 'planned') {
-      newTask.dueDate = dueDate;
-      if (dueTime) newTask.dueTime = dueTime;
-    }
-    
-    setTodos([...todos, newTask]);
-    addNotification(
-      'Tâche ajoutée',
-      `"${newTodo}" a été ajoutée à votre liste`,
-      'task',
-      'fas fa-tasks'
-    );
-    setNewTodo('');
-    setDueDate('');
-    setDueTime('');
-    setInputError(null);
-  }
-};
           <ul className="todo-list">
             {filteredTodos.map(todo => (
               <li 
