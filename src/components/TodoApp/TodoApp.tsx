@@ -17,6 +17,7 @@ const TodoApp = () => {
   const [emailToShare, setEmailToShare] = useState('');
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Chargement des données
@@ -47,6 +48,27 @@ const TodoApp = () => {
       localStorage.setItem(`notifications_${user.email}`, JSON.stringify(notifications));
     }
   }, [todos, sharedUsers, notifications, user]);
+
+  // Fermer le menu mobile lorsqu'on clique à l'extérieur
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const sidebar = document.querySelector('.sidebar');
+      const hamburger = document.querySelector('.hamburger-menu');
+      
+      if (isMobileMenuOpen && 
+          sidebar && 
+          !sidebar.contains(event.target as Node) && 
+          hamburger &&
+          !hamburger.contains(event.target as Node)) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isMobileMenuOpen]);
 
   // Gestion des notifications
   const addNotification = (
@@ -85,7 +107,17 @@ const TodoApp = () => {
 
   // Gestion des tâches
   const handleAddTodo = () => {
-    if (newTodo.trim() && user) {
+    if (!newTodo.trim()) {
+      setInputError("Veuillez saisir une tâche");
+      return;
+    }
+  
+    if (activeMenu === 'planned' && !dueDate) {
+      setInputError("Veuillez sélectionner au moins une date");
+      return;
+    }
+  
+    if (user) {
       const newTask: Todo = {
         id: Date.now(),
         text: newTodo,
@@ -95,7 +127,7 @@ const TodoApp = () => {
         createdAt: Date.now()
       };
       
-      if (activeMenu === 'planned' && dueDate) {
+      if (activeMenu === 'planned') {
         newTask.dueDate = dueDate;
         if (dueTime) newTask.dueTime = dueTime;
       }
@@ -110,6 +142,7 @@ const TodoApp = () => {
       setNewTodo('');
       setDueDate('');
       setDueTime('');
+      setInputError(null);
     }
   };
 
@@ -213,7 +246,15 @@ const TodoApp = () => {
 
   return (
     <div className="todo-app-container">
-      <aside className="sidebar">
+      {/* Bouton hamburger pour mobile */}
+      <button 
+        className="hamburger-menu"
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+      >
+        <i className={`fas ${isMobileMenuOpen ? 'fa-times' : 'fa-bars'}`}></i>
+      </button>
+
+      <aside className={`sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
         <div className="user-profile">
           <div className="user-avatar">
             <i className="fas fa-user-circle"></i>
@@ -227,7 +268,10 @@ const TodoApp = () => {
 
         <nav className="sidebar-menu">
           <button 
-            onClick={() => setActiveMenu('today')} 
+            onClick={() => {
+              setActiveMenu('today');
+              setIsMobileMenuOpen(false);
+            }} 
             className={`menu-item ${activeMenu === 'today' ? 'active' : ''}`}
           >
             <span className="menu-icon"><i className="fas fa-sun"></i></span>
@@ -235,7 +279,10 @@ const TodoApp = () => {
           </button>
           
           <button 
-            onClick={() => setActiveMenu('planned')} 
+            onClick={() => {
+              setActiveMenu('planned');
+              setIsMobileMenuOpen(false);
+            }} 
             className={`menu-item ${activeMenu === 'planned' ? 'active' : ''}`}
           >
             <span className="menu-icon"><i className="fas fa-calendar-alt"></i></span>
@@ -243,7 +290,10 @@ const TodoApp = () => {
           </button>
           
           <button 
-            onClick={() => setActiveMenu('important')} 
+            onClick={() => {
+              setActiveMenu('important');
+              setIsMobileMenuOpen(false);
+            }} 
             className={`menu-item ${activeMenu === 'important' ? 'active' : ''}`}
           >
             <span className="menu-icon"><i className="fas fa-star"></i></span>
@@ -251,7 +301,10 @@ const TodoApp = () => {
           </button>
           
           <button 
-            onClick={() => setActiveMenu('completed')} 
+            onClick={() => {
+              setActiveMenu('completed');
+              setIsMobileMenuOpen(false);
+            }} 
             className={`menu-item ${activeMenu === 'completed' ? 'active' : ''}`}
           >
             <span className="menu-icon"><i className="fas fa-check-circle"></i></span>
@@ -261,7 +314,10 @@ const TodoApp = () => {
           <div className="menu-divider"></div>
 
           <button 
-            onClick={() => setShowNotifications(!showNotifications)}
+            onClick={() => {
+              setShowNotifications(!showNotifications);
+              setIsMobileMenuOpen(false);
+            }}
             className={`menu-item ${showNotifications ? 'active' : ''}`}
           >
             <span className="menu-icon">
@@ -274,7 +330,10 @@ const TodoApp = () => {
           </button>
           
           <button 
-            onClick={() => setShowShareModal(true)}
+            onClick={() => {
+              setShowShareModal(true);
+              setIsMobileMenuOpen(false);
+            }}
             className="menu-item share-menu"
           >
             <span className="menu-icon"><i className="fas fa-share-alt"></i></span>
@@ -292,42 +351,45 @@ const TodoApp = () => {
             {activeMenu === 'completed' && 'Tâches terminées'}
           </h2>
 
-          {activeMenu !== 'completed' && (
-            <div className="input-field">
-              <div className="input-container">
-                <textarea
-                  ref={textareaRef}
-                  value={newTodo}
-                  onChange={(e) => setNewTodo(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleAddTodo()}
-                  placeholder="Entrez votre nouvelle tâche"
-                  rows={1}
-                />
-                <span className="note-icon">
-                  <i className="fas fa-pencil-alt"></i>
-                </span>
-              </div>
+          const handleAddTodo = () => {
+  if (!newTodo.trim()) {
+    setInputError("Veuillez saisir une tâche");
+    return;
+  }
 
-              {activeMenu === 'planned' && (
-                <div className="datetime-inputs">
-                  <input
-                    type="date"
-                    value={dueDate}
-                    onChange={(e) => setDueDate(e.target.value)}
-                    className="date-input"
-                    min={new Date().toISOString().split('T')[0]}
-                  />
-                  <input
-                    type="time"
-                    value={dueTime}
-                    onChange={(e) => setDueTime(e.target.value)}
-                    className="time-input"
-                  />
-                </div>
-              )}
-            </div>
-          )}
+  if (activeMenu === 'planned' && !dueDate) {
+    setInputError("Veuillez sélectionner au moins une date");
+    return;
+  }
 
+  if (user) {
+    const newTask: Todo = {
+      id: Date.now(),
+      text: newTodo,
+      completed: false,
+      important: false,
+      addedBy: user.email,
+      createdAt: Date.now()
+    };
+    
+    if (activeMenu === 'planned') {
+      newTask.dueDate = dueDate;
+      if (dueTime) newTask.dueTime = dueTime;
+    }
+    
+    setTodos([...todos, newTask]);
+    addNotification(
+      'Tâche ajoutée',
+      `"${newTodo}" a été ajoutée à votre liste`,
+      'task',
+      'fas fa-tasks'
+    );
+    setNewTodo('');
+    setDueDate('');
+    setDueTime('');
+    setInputError(null);
+  }
+};
           <ul className="todo-list">
             {filteredTodos.map(todo => (
               <li 
