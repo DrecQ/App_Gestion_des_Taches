@@ -1,0 +1,50 @@
+.todo-item.important {
+    border-left-color: #fdcb6e;
+    background: linear-gradient(
+      to right,
+      rgba(253, 203, 110, 0.05),
+      rgba(253, 203, 110, 0.02) 70%,
+      rgba(253, 203, 110, 0.01)
+    );
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* Ajout d'un effet de lumière subtile */
+  .todo-item.important::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.3) 0%,
+      transparent 50%
+    );
+    border-radius: 5px;
+    z-index: -1;
+    pointer-events: none;
+  }
+  
+  /* Adaptation pour l'état hover */
+  .todo-item.important:hover {
+    background: linear-gradient(
+      to right,
+      rgba(253, 203, 110, 0.08),
+      rgba(253, 203, 110, 0.04) 70%,
+      rgba(253, 203, 110, 0.02)
+    );
+    transform: translateY(-1px);
+  }
+  
+  /* Adaptation pour l'état completed */
+  .todo-item.important.completed {
+    background: linear-gradient(
+      to right,
+      rgba(253, 203, 110, 0.03),
+      rgba(253, 203, 110, 0.01) 70%,
+      rgba(253, 203, 110, 0.005)
+    );
+  }

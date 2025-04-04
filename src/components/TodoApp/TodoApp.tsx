@@ -1,26 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Notification, SharedUser, Todo, User } from '../../types/types';
+import { ShareModal, NotificationsModal } from '../Modals/Modals';
 import './TodoApp.css';
-
-interface Todo {
-  id: number;
-  text: string;
-  completed: boolean;
-  important: boolean;
-  dueDate?: string;
-  dueTime?: string;
-  addedBy?: string;
-}
-
-interface User {
-  name: string;
-  email: string;
-}
-
-interface SharedUser {
-  email: string;
-  name: string;
-}
 
 const TodoApp = () => {
   const navigate = useNavigate();
@@ -33,21 +15,25 @@ const TodoApp = () => {
   const [dueTime, setDueTime] = useState('');
   const [showShareModal, setShowShareModal] = useState(false);
   const [emailToShare, setEmailToShare] = useState('');
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [showNotifications, setShowNotifications] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Chargement des données utilisateur
+  // Chargement des données
   useEffect(() => {
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
       const userData = JSON.parse(storedUser);
       setUser(userData);
       
-      // Charger les todos et les utilisateurs partagés depuis le localStorage
       const storedTodos = localStorage.getItem(`todos_${userData.email}`);
       if (storedTodos) setTodos(JSON.parse(storedTodos));
       
       const storedShared = localStorage.getItem(`shared_${userData.email}`);
       if (storedShared) setSharedUsers(JSON.parse(storedShared));
+
+      const storedNotifications = localStorage.getItem(`notifications_${userData.email}`);
+      if (storedNotifications) setNotifications(JSON.parse(storedNotifications));
     } else {
       navigate('/login');
     }
@@ -58,15 +44,46 @@ const TodoApp = () => {
     if (user) {
       localStorage.setItem(`todos_${user.email}`, JSON.stringify(todos));
       localStorage.setItem(`shared_${user.email}`, JSON.stringify(sharedUsers));
+      localStorage.setItem(`notifications_${user.email}`, JSON.stringify(notifications));
     }
-  }, [todos, sharedUsers, user]);
+  }, [todos, sharedUsers, notifications, user]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('currentUser');
-    navigate('/login');
+  // Gestion des notifications
+  const addNotification = (
+    title: string, 
+    message: string, 
+    type?: Notification['type'],
+    icon?: string,
+    data?: Notification['data']
+  ) => {
+    const newNotification: Notification = {
+      id: Date.now().toString(),
+      title,
+      message,
+      read: false,
+      timestamp: new Date(),
+      type,
+      icon,
+      data
+    };
+    setNotifications(prev => [newNotification, ...prev]);
   };
 
-  // Fonctions de gestion des tâches
+  const markAsRead = (id: string) => {
+    setNotifications(prev => 
+      prev.map(n => n.id === id ? { ...n, read: true } : n)
+    );
+  };
+
+  const markAllAsRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  };
+
+  const clearAllNotifications = () => {
+    setNotifications([]);
+  };
+
+  // Gestion des tâches
   const handleAddTodo = () => {
     if (newTodo.trim() && user) {
       const newTask: Todo = {
@@ -74,13 +91,22 @@ const TodoApp = () => {
         text: newTodo,
         completed: false,
         important: false,
-        addedBy: user.email
+        addedBy: user.email,
+        createdAt: Date.now()
       };
+      
       if (activeMenu === 'planned' && dueDate) {
         newTask.dueDate = dueDate;
         if (dueTime) newTask.dueTime = dueTime;
       }
+      
       setTodos([...todos, newTask]);
+      addNotification(
+        'Tâche ajoutée',
+        `"${newTodo}" a été ajoutée à votre liste`,
+        'task',
+        'fas fa-tasks'
+      );
       setNewTodo('');
       setDueDate('');
       setDueTime('');
@@ -89,34 +115,58 @@ const TodoApp = () => {
 
   const toggleTodo = (id: number) => {
     setTodos(todos.map(todo => 
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      todo.id === id ? { ...todo, completed: !todo.completed, updatedAt: Date.now() } : todo
     ));
   };
 
   const toggleImportant = (id: number) => {
     setTodos(todos.map(todo => 
-      todo.id === id ? { ...todo, important: !todo.important } : todo
+      todo.id === id ? { ...todo, important: !todo.important, updatedAt: Date.now() } : todo
     ));
   };
 
   const deleteTodo = (id: number) => {
+    const todoToDelete = todos.find(todo => todo.id === id);
+    if (todoToDelete) {
+      addNotification(
+        'Tâche supprimée',
+        `"${todoToDelete.text}" a été supprimée`,
+        'warning',
+        'fas fa-trash-alt'
+      );
+    }
     setTodos(todos.filter(todo => todo.id !== id));
   };
 
   const clearCompleted = () => {
     setTodos(todos.filter(todo => !todo.completed));
+    addNotification(
+      'Nettoyage effectué',
+      'Toutes les tâches terminées ont été supprimées',
+      'success',
+      'fas fa-broom'
+    );
   };
 
-  // Fonctions de partage
+  // Partage de la liste
   const handleShareList = () => {
     if (emailToShare.trim() && user) {
-      const newSharedUser = {
+      const newSharedUser: SharedUser = {
+        id: Date.now().toString(),
         email: emailToShare,
-        name: emailToShare.split('@')[0]
+        name: emailToShare.split('@')[0],
+        permission: 'write',
+        sharedAt: Date.now()
       };
       
       if (!sharedUsers.some(u => u.email === emailToShare)) {
         setSharedUsers([...sharedUsers, newSharedUser]);
+        addNotification(
+          'Liste partagée',
+          `Vous avez partagé votre liste avec ${emailToShare}`,
+          'share',
+          'fas fa-share-alt'
+        );
         setEmailToShare('');
       }
     }
@@ -124,15 +174,26 @@ const TodoApp = () => {
 
   const handleRemoveAccess = (email: string) => {
     setSharedUsers(sharedUsers.filter(user => user.email !== email));
+    addNotification(
+      'Accès révoqué',
+      `Vous avez révoqué l'accès pour ${email}`,
+      'warning',
+      'fas fa-user-times'
+    );
   };
 
-  // Trie les tâches
+  const handleLogout = () => {
+    localStorage.removeItem('currentUser');
+    navigate('/login');
+  };
+
+  // Tri et filtrage des tâches
   const sortedTodos = [...todos].sort((a, b) => {
     if (a.completed && !b.completed) return 1;
     if (!a.completed && b.completed) return -1;
     if (a.important && !b.important) return -1;
     if (!a.important && b.important) return 1;
-    return 0;
+    return (b.createdAt || 0) - (a.createdAt || 0);
   });
 
   const filteredTodos = sortedTodos.filter(todo => {
@@ -144,6 +205,8 @@ const TodoApp = () => {
     }
   });
 
+  const unreadCount = notifications.filter(n => !n.read).length;
+
   if (!user) {
     return <div className="loading">Chargement en cours...</div>;
   }
@@ -152,7 +215,9 @@ const TodoApp = () => {
     <div className="todo-app-container">
       <aside className="sidebar">
         <div className="user-profile">
-          <div className="user-avatar"><i className="fas fa-user-circle"></i></div>
+          <div className="user-avatar">
+            <i className="fas fa-user-circle"></i>
+          </div>
           <h3>{user.name}</h3>
           <p>{user.email}</p>
           <button onClick={handleLogout} className="logout-btn">
@@ -194,6 +259,19 @@ const TodoApp = () => {
           </button>
 
           <div className="menu-divider"></div>
+
+          <button 
+            onClick={() => setShowNotifications(!showNotifications)}
+            className={`menu-item ${showNotifications ? 'active' : ''}`}
+          >
+            <span className="menu-icon">
+              <i className="fas fa-bell"></i>
+              {unreadCount > 0 && (
+                <span className="notification-badge">{unreadCount}</span>
+              )}
+            </span>
+            <span>Notifications</span>
+          </button>
           
           <button 
             onClick={() => setShowShareModal(true)}
@@ -319,55 +397,23 @@ const TodoApp = () => {
         </div>
       </main>
 
-      {/* Modal de partage */}
-      {showShareModal && (
-        <div className="share-modal-overlay" onClick={() => setShowShareModal(false)}>
-          <div className="share-modal-content" onClick={(e) => e.stopPropagation()}>
-            <h3><i className="fas fa-share-alt"></i> Partager ma liste</h3>
-            <div className="share-input-group">
-              <input
-                type="email"
-                value={emailToShare}
-                onChange={(e) => setEmailToShare(e.target.value)}
-                placeholder="Entrez l'email à partager"
-                onKeyDown={(e) => e.key === 'Enter' && handleShareList()}
-              />
-              <button onClick={handleShareList} disabled={!emailToShare.trim()}>
-                <i className="fas fa-user-plus"></i> Ajouter
-              </button>
-            </div>
-            
-            {sharedUsers.length > 0 && (
-              <div className="shared-users-section">
-                <h4>Personnes avec accès :</h4>
-                <ul className="shared-users-list">
-                  {sharedUsers.map(user => (
-                    <li key={user.email}>
-                      <span className="user-info">
-                        <i className="fas fa-user-circle"></i>
-                        {user.name} ({user.email})
-                      </span>
-                      <button 
-                        className="remove-access-btn"
-                        onClick={() => handleRemoveAccess(user.email)}
-                      >
-                        <i className="fas fa-times"></i>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            
-            <button 
-              className="close-modal-btn"
-              onClick={() => setShowShareModal(false)}
-            >
-              <i className="fas fa-times"></i> Fermer
-            </button>
-          </div>
-        </div>
-      )}
+      <ShareModal
+        show={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        emailToShare={emailToShare}
+        setEmailToShare={setEmailToShare}
+        onShare={handleShareList}
+        sharedUsers={sharedUsers}
+        onRemoveAccess={handleRemoveAccess}
+      />
+
+      <NotificationsModal
+        show={showNotifications}
+        onClose={() => setShowNotifications(false)}
+        notifications={notifications}
+        onMarkAsRead={markAsRead}
+        onClearAll={clearAllNotifications}
+      />
     </div>
   );
 };
