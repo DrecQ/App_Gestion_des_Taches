@@ -23,20 +23,24 @@ const TaskManager: React.FC = () => {
   const [priority, setPriority] = useState<"Urgent" | "Normal" | "Faible">("Normal");
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
-  const [activeTab, setActiveTab] = useState<string>("all");  // Etat pour l'onglet actif
+  const [activeTab, setActiveTab] = useState<string>("all");
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [sharedUid, setSharedUid] = useState(""); // Champ pour l'UID à partager
+  const [sharedUid, setSharedUid] = useState(""); // UID à partager
+
   const tasksRef = collection(db, "tasks");
 
+  // Toggle pour changer le thème
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
   };
 
+  // Données pour le graphique PieChart
   const data = [
     { name: "Complétées", value: tasks.filter((t) => t.completed).length },
     { name: "En cours", value: tasks.filter((t) => !t.completed).length },
   ];
 
+  // Récupération des tâches en fonction du filtre
   useEffect(() => {
     const currentUser = auth.currentUser;
     if (!currentUser) return;
@@ -65,7 +69,7 @@ const TaskManager: React.FC = () => {
     return () => unsubscribe();
   }, [filter]);
 
-  // Ajout d'une tâche
+  // Ajouter une nouvelle tâche
   const addTask = async () => {
     if (newTask.trim() === "" || dueDate === "") return;
 
@@ -75,7 +79,7 @@ const TaskManager: React.FC = () => {
       completed: false,
       userId: auth.currentUser?.uid,
       priority,
-      sharedWith: [], // Initialise le tableau sharedWith
+      sharedWith: [],
     });
 
     setNewTask("");
@@ -83,26 +87,26 @@ const TaskManager: React.FC = () => {
     setPriority("Normal");
   };
 
-  // Fonction pour partager une tâche
+  // Partager une tâche avec un autre utilisateur
   const shareTask = async (taskId: string) => {
-    if (sharedUid.trim() === "") return; // Vérifier que l'UID n'est pas vide
+    if (sharedUid.trim() === "") return;
 
     const taskRef = doc(db, "tasks", taskId);
     await updateDoc(taskRef, {
-      sharedWith: arrayUnion(sharedUid) // Ajoute l'UID à sharedWith
+      sharedWith: arrayUnion(sharedUid),
     });
 
-    setSharedUid(""); // Réinitialiser le champ après partage
+    setSharedUid("");
   };
 
-  // Filtrage dynamique
+  // Filtrer les tâches en fonction du terme de recherche
   const filteredTasks = useMemo(() => {
     return tasks.filter((task) =>
       task.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [tasks, searchTerm]);
 
-  // Changer l'état d'une tâche
+  // Changer l'état d'une tâche (complétée/non complétée)
   const toggleComplete = async (id: string, completed: boolean) => {
     await updateDoc(doc(db, "tasks", id), { completed: !completed });
   };
@@ -112,14 +116,14 @@ const TaskManager: React.FC = () => {
     await deleteDoc(doc(db, "tasks", id));
   };
 
-  // Couleurs de priorité
+  // Définir les couleurs en fonction de la priorité
   const priorityColors: Record<string, string> = {
     Urgent: "red",
     Normal: "orange",
     Faible: "green",
   };
 
-  // Fonction pour changer d'onglet
+  // Gérer le changement d'onglet (Toutes, Complétées, Échues, À venir)
   const handleTabClick = (tab: string) => {
     setFilter(tab);
     setActiveTab(tab);
@@ -127,6 +131,7 @@ const TaskManager: React.FC = () => {
 
   return (
     <div className={`p-4 max-w-xl mx-auto min-h-screen ${isDarkMode ? "bg-dark text-light" : "bg-light text-dark"}`}>
+      {/* En-tête */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold">📋 Mes Tâches</h2>
         <button onClick={toggleTheme} className="text-sm border px-2 py-1 rounded">
@@ -134,7 +139,7 @@ const TaskManager: React.FC = () => {
         </button>
       </div>
 
-      {/* Graphique des tâches */}
+      {/* Graphique PieChart */}
       <PieChart width={400} height={250}>
         <Pie
           data={data}
@@ -148,7 +153,7 @@ const TaskManager: React.FC = () => {
         />
       </PieChart>
 
-      {/* Recherche */}
+      {/* Barre de recherche */}
       <input
         type="text"
         placeholder="🔍 Rechercher une tâche"
@@ -157,7 +162,7 @@ const TaskManager: React.FC = () => {
         className="border p-2 mb-2 w-full"
       />
 
-      {/* Filtres */}
+      {/* Filtres des tâches */}
       <div className="space-x-2 mb-4">
         <button 
           onClick={() => handleTabClick("all")}
@@ -185,7 +190,7 @@ const TaskManager: React.FC = () => {
         </button>
       </div>
 
-      {/* Ajout de tâche */}
+      {/* Formulaire pour ajouter une tâche */}
       <div className="space-y-2 mb-4">
         <input
           type="text"
@@ -214,7 +219,7 @@ const TaskManager: React.FC = () => {
         </button>
       </div>
 
-      {/* Champ pour l'UID de partage */}
+      {/* Formulaire pour partager une tâche */}
       <div className="space-y-2 mb-4">
         <input
           type="text"
@@ -223,18 +228,15 @@ const TaskManager: React.FC = () => {
           onChange={(e) => setSharedUid(e.target.value)}
           className="border p-2 w-full"
         />
-       <button onClick={() => shareTask(tasks[0]?.id)} className="bg-blue-500 text-black px-4 py-2 rounded">
-  Partager
-</button>
+        <button onClick={() => shareTask(tasks[0]?.id)} className="bg-blue-500 text-black px-4 py-2 rounded">
+          Partager
+        </button>
       </div>
 
       {/* Liste des tâches */}
       <ul className="space-y-2">
         {filteredTasks.map((task) => (
-          <li
-            key={task.id}
-            className="border p-2 rounded flex justify-between items-center"
-          >
+          <li key={task.id} className="border p-2 rounded flex justify-between items-center">
             <div>
               <span
                 style={{
@@ -257,12 +259,9 @@ const TaskManager: React.FC = () => {
         ))}
       </ul>
 
-      {/* Déconnexion */}
+      {/* Bouton de déconnexion */}
       <div className="mt-4">
-        <button
-          onClick={() => signOut(auth)}
-          className="text-sm text-gray-600 underline"
-        >
+        <button onClick={() => signOut(auth)} className="text-sm text-gray-600 underline">
           🔓 Déconnexion
         </button>
       </div>
