@@ -1,4 +1,3 @@
-// src/components/TaskManager.tsx
 import React, { useEffect, useMemo, useState } from "react";
 import { signOut } from "firebase/auth";
 import 'react-calendar/dist/Calendar.css';
@@ -12,6 +11,7 @@ import {
   query,
   updateDoc,
   where,
+  arrayUnion,
 } from "firebase/firestore";
 import { db, auth } from "../firebase";
 import { Task } from "../types/Task";
@@ -23,7 +23,9 @@ const TaskManager: React.FC = () => {
   const [priority, setPriority] = useState<"Urgent" | "Normal" | "Faible">("Normal");
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
+  const [activeTab, setActiveTab] = useState<string>("all");  // Etat pour l'onglet actif
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [sharedUid, setSharedUid] = useState(""); // Champ pour l'UID à partager
   const tasksRef = collection(db, "tasks");
 
   const toggleTheme = () => {
@@ -35,28 +37,6 @@ const TaskManager: React.FC = () => {
     { name: "En cours", value: tasks.filter((t) => !t.completed).length },
   ];
 
-  {/* Statistiques de tâches */}
-<div className={isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"}>
-<h3 className="text-lg font-semibold mb-2">📊 Statistiques</h3>
-  <PieChart width={300} height={250}>
-    <Pie
-      data={data}
-      dataKey="value"
-      nameKey="name"
-      cx="50%"
-      cy="50%"
-      outerRadius={80}
-      fill="#8884d8"
-      label
-    />
-  </PieChart>
-  <ul className="text-sm mt-2">
-    <li>✔️ Complétées : {data[0].value}</li>
-    <li>🕒 En cours / à venir : {data[1].value}</li>
-  </ul>
-</div>
-
-  // Récupération des tâches en temps réel selon le filtre
   useEffect(() => {
     const currentUser = auth.currentUser;
     if (!currentUser) return;
@@ -95,11 +75,24 @@ const TaskManager: React.FC = () => {
       completed: false,
       userId: auth.currentUser?.uid,
       priority,
+      sharedWith: [], // Initialise le tableau sharedWith
     });
 
     setNewTask("");
     setDueDate("");
     setPriority("Normal");
+  };
+
+  // Fonction pour partager une tâche
+  const shareTask = async (taskId: string) => {
+    if (sharedUid.trim() === "") return; // Vérifier que l'UID n'est pas vide
+
+    const taskRef = doc(db, "tasks", taskId);
+    await updateDoc(taskRef, {
+      sharedWith: arrayUnion(sharedUid) // Ajoute l'UID à sharedWith
+    });
+
+    setSharedUid(""); // Réinitialiser le champ après partage
   };
 
   // Filtrage dynamique
@@ -124,6 +117,12 @@ const TaskManager: React.FC = () => {
     Urgent: "red",
     Normal: "orange",
     Faible: "green",
+  };
+
+  // Fonction pour changer d'onglet
+  const handleTabClick = (tab: string) => {
+    setFilter(tab);
+    setActiveTab(tab);
   };
 
   return (
@@ -160,10 +159,30 @@ const TaskManager: React.FC = () => {
 
       {/* Filtres */}
       <div className="space-x-2 mb-4">
-        <button onClick={() => setFilter("all")}>Toutes</button>
-        <button onClick={() => setFilter("completed")}>✔️ Complétées</button>
-        <button onClick={() => setFilter("due")}>⏰ Échues</button>
-        <button onClick={() => setFilter("upcoming")}>📅 À venir</button>
+        <button 
+          onClick={() => handleTabClick("all")}
+          className={`px-4 py-2 rounded ${activeTab === "all" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+        >
+          Toutes
+        </button>
+        <button 
+          onClick={() => handleTabClick("completed")}
+          className={`px-4 py-2 rounded ${activeTab === "completed" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+        >
+          ✔️ Complétées
+        </button>
+        <button 
+          onClick={() => handleTabClick("due")}
+          className={`px-4 py-2 rounded ${activeTab === "due" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+        >
+          ⏰ Échues
+        </button>
+        <button 
+          onClick={() => handleTabClick("upcoming")}
+          className={`px-4 py-2 rounded ${activeTab === "upcoming" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+        >
+          📅 À venir
+        </button>
       </div>
 
       {/* Ajout de tâche */}
@@ -191,8 +210,22 @@ const TaskManager: React.FC = () => {
           <option value="Faible">🟢 Faible</option>
         </select>
         <button onClick={addTask} className="bg-white text-black px-4 py-2 rounded border border-gray-300">
-  ➕ Ajouter</button>
+          ➕ Ajouter
+        </button>
+      </div>
 
+      {/* Champ pour l'UID de partage */}
+      <div className="space-y-2 mb-4">
+        <input
+          type="text"
+          placeholder="User ID à partager"
+          value={sharedUid}
+          onChange={(e) => setSharedUid(e.target.value)}
+          className="border p-2 w-full"
+        />
+       <button onClick={() => shareTask(tasks[0]?.id)} className="bg-blue-500 text-black px-4 py-2 rounded">
+  Partager
+</button>
       </div>
 
       {/* Liste des tâches */}
