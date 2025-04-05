@@ -35,6 +35,27 @@ const TaskManager: React.FC = () => {
     { name: "En cours", value: tasks.filter((t) => !t.completed).length },
   ];
 
+  {/* Statistiques de tâches */}
+<div className={isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"}>
+<h3 className="text-lg font-semibold mb-2">📊 Statistiques</h3>
+  <PieChart width={300} height={250}>
+    <Pie
+      data={data}
+      dataKey="value"
+      nameKey="name"
+      cx="50%"
+      cy="50%"
+      outerRadius={80}
+      fill="#8884d8"
+      label
+    />
+  </PieChart>
+  <ul className="text-sm mt-2">
+    <li>✔️ Complétées : {data[0].value}</li>
+    <li>🕒 En cours / à venir : {data[1].value}</li>
+  </ul>
+</div>
+
   // Récupération des tâches en temps réel selon le filtre
   useEffect(() => {
     const currentUser = auth.currentUser;
@@ -169,9 +190,9 @@ const TaskManager: React.FC = () => {
           <option value="Normal">🟠 Normal</option>
           <option value="Faible">🟢 Faible</option>
         </select>
-        <button onClick={addTask} className="bg-blue-500 text-white px-4 py-2 rounded">
-          ➕ Ajouter
-        </button>
+        <button onClick={addTask} className="bg-white text-black px-4 py-2 rounded border border-gray-300">
+  ➕ Ajouter</button>
+
       </div>
 
       {/* Liste des tâches */}
