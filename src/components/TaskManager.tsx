@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { signOut } from "firebase/auth";
-import 'react-calendar/dist/Calendar.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { PieChart, Pie } from "recharts";
 import {
   addDoc,
@@ -25,22 +25,19 @@ const TaskManager: React.FC = () => {
   const [filter, setFilter] = useState("all");
   const [activeTab, setActiveTab] = useState<string>("all");
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [sharedUid, setSharedUid] = useState(""); // UID à partager
+  const [sharedUid, setSharedUid] = useState("");
 
   const tasksRef = collection(db, "tasks");
 
-  // Toggle pour changer le thème
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
   };
 
-  // Données pour le graphique PieChart
   const data = [
     { name: "Complétées", value: tasks.filter((t) => t.completed).length },
     { name: "En cours", value: tasks.filter((t) => !t.completed).length },
   ];
 
-  // Récupération des tâches en fonction du filtre
   useEffect(() => {
     const currentUser = auth.currentUser;
     if (!currentUser) return;
@@ -69,7 +66,6 @@ const TaskManager: React.FC = () => {
     return () => unsubscribe();
   }, [filter]);
 
-  // Ajouter une nouvelle tâche
   const addTask = async () => {
     if (newTask.trim() === "" || dueDate === "") return;
 
@@ -87,7 +83,6 @@ const TaskManager: React.FC = () => {
     setPriority("Normal");
   };
 
-  // Partager une tâche avec un autre utilisateur
   const shareTask = async (taskId: string) => {
     if (sharedUid.trim() === "") return;
 
@@ -99,47 +94,40 @@ const TaskManager: React.FC = () => {
     setSharedUid("");
   };
 
-  // Filtrer les tâches en fonction du terme de recherche
   const filteredTasks = useMemo(() => {
     return tasks.filter((task) =>
       task.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [tasks, searchTerm]);
 
-  // Changer l'état d'une tâche (complétée/non complétée)
   const toggleComplete = async (id: string, completed: boolean) => {
     await updateDoc(doc(db, "tasks", id), { completed: !completed });
   };
 
-  // Supprimer une tâche
   const deleteTask = async (id: string) => {
     await deleteDoc(doc(db, "tasks", id));
   };
 
-  // Définir les couleurs en fonction de la priorité
   const priorityColors: Record<string, string> = {
-    Urgent: "red",
-    Normal: "orange",
-    Faible: "green",
+    Urgent: "danger",
+    Normal: "warning",
+    Faible: "success",
   };
 
-  // Gérer le changement d'onglet (Toutes, Complétées, Échues, À venir)
   const handleTabClick = (tab: string) => {
     setFilter(tab);
     setActiveTab(tab);
   };
 
   return (
-    <div className={`p-4 max-w-xl mx-auto min-h-screen ${isDarkMode ? "bg-dark text-light" : "bg-light text-dark"}`}>
-      {/* En-tête */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">📋 Mes Tâches</h2>
-        <button onClick={toggleTheme} className="text-sm border px-2 py-1 rounded">
+    <div className={`container py-4 ${isDarkMode ? "bg-dark text-light" : "bg-light text-dark"}`}>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2>📋 Mes Tâches</h2>
+        <button className="btn btn-outline-secondary btn-sm" onClick={toggleTheme}>
           Mode {isDarkMode ? "Clair" : "Sombre"}
         </button>
       </div>
 
-      {/* Graphique PieChart */}
       <PieChart width={400} height={250}>
         <Pie
           data={data}
@@ -153,117 +141,76 @@ const TaskManager: React.FC = () => {
         />
       </PieChart>
 
-      {/* Barre de recherche */}
       <input
         type="text"
+        className="form-control my-3"
         placeholder="🔍 Rechercher une tâche"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="border p-2 mb-2 w-full"
       />
 
-      {/* Filtres des tâches */}
-      <div className="space-x-2 mb-4">
-        <button 
-          onClick={() => handleTabClick("all")}
-          className={`px-4 py-2 rounded ${activeTab === "all" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
-        >
-          Toutes
-        </button>
-        <button 
-          onClick={() => handleTabClick("completed")}
-          className={`px-4 py-2 rounded ${activeTab === "completed" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
-        >
-          ✔️ Complétées
-        </button>
-        <button 
-          onClick={() => handleTabClick("due")}
-          className={`px-4 py-2 rounded ${activeTab === "due" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
-        >
-          ⏰ Échues
-        </button>
-        <button 
-          onClick={() => handleTabClick("upcoming")}
-          className={`px-4 py-2 rounded ${activeTab === "upcoming" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
-        >
-          📅 À venir
-        </button>
+      <div className="btn-group mb-3 w-100">
+        <button className={`btn ${activeTab === "all" ? "btn-primary" : "btn-outline-primary"}`} onClick={() => handleTabClick("all")}>Toutes</button>
+        <button className={`btn ${activeTab === "completed" ? "btn-primary" : "btn-outline-primary"}`} onClick={() => handleTabClick("completed")}>✔️ Complétées</button>
+        <button className={`btn ${activeTab === "due" ? "btn-primary" : "btn-outline-primary"}`} onClick={() => handleTabClick("due")}>⏰ Échues</button>
+        <button className={`btn ${activeTab === "upcoming" ? "btn-primary" : "btn-outline-primary"}`} onClick={() => handleTabClick("upcoming")}>📅 À venir</button>
       </div>
 
-      {/* Formulaire pour ajouter une tâche */}
-      <div className="space-y-2 mb-4">
+      <div className="mb-4">
         <input
           type="text"
+          className="form-control mb-2"
           placeholder="Nouvelle tâche"
           value={newTask}
           onChange={(e) => setNewTask(e.target.value)}
-          className="border p-2 w-full"
         />
         <input
           type="date"
+          className="form-control mb-2"
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
-          className="border p-2 w-full"
         />
         <select
+          className="form-select mb-2"
           value={priority}
           onChange={(e) => setPriority(e.target.value as any)}
-          className="border p-2 w-full"
         >
           <option value="Urgent">🚨 Urgent</option>
           <option value="Normal">🟠 Normal</option>
           <option value="Faible">🟢 Faible</option>
         </select>
-        <button onClick={addTask} className="bg-white text-black px-4 py-2 rounded border border-gray-300">
-          ➕ Ajouter
-        </button>
+        <button className="btn btn-success w-100" onClick={addTask}>➕ Ajouter</button>
       </div>
 
-      {/* Formulaire pour partager une tâche */}
-      <div className="space-y-2 mb-4">
+      <div className="mb-4">
         <input
           type="text"
+          className="form-control mb-2"
           placeholder="User ID à partager"
           value={sharedUid}
           onChange={(e) => setSharedUid(e.target.value)}
-          className="border p-2 w-full"
         />
-        <button onClick={() => shareTask(tasks[0]?.id)} className="bg-blue-500 text-black px-4 py-2 rounded">
-          Partager
-        </button>
+        <button className="btn btn-info w-100" onClick={() => shareTask(tasks[0]?.id)}>Partager</button>
       </div>
 
-      {/* Liste des tâches */}
-      <ul className="space-y-2">
+      <ul className="list-group">
         {filteredTasks.map((task) => (
-          <li key={task.id} className="border p-2 rounded flex justify-between items-center">
+          <li key={task.id} className="list-group-item d-flex justify-content-between align-items-center">
+            <span className={`text-${priorityColors[task.priority]}`} style={{ textDecoration: task.completed ? "line-through" : "none" }}>
+              {task.title} ({task.priority}) - {task.dueDate}
+            </span>
             <div>
-              <span
-                style={{
-                  textDecoration: task.completed ? "line-through" : "none",
-                  color: priorityColors[task.priority] || "black",
-                }}
-              >
-                {task.title} ({task.priority}) - {task.dueDate}
-              </span>
-            </div>
-            <div className="space-x-2">
-              <button onClick={() => toggleComplete(task.id, task.completed)}>
+              <button className="btn btn-sm btn-outline-success me-2" onClick={() => toggleComplete(task.id, task.completed)}>
                 {task.completed ? "↩️ Annuler" : "✅ Terminer"}
               </button>
-              <button onClick={() => deleteTask(task.id)} className="text-red-500">
-                🗑️ Supprimer
-              </button>
+              <button className="btn btn-sm btn-outline-danger" onClick={() => deleteTask(task.id)}>🗑️</button>
             </div>
           </li>
         ))}
       </ul>
 
-      {/* Bouton de déconnexion */}
-      <div className="mt-4">
-        <button onClick={() => signOut(auth)} className="text-sm text-gray-600 underline">
-          🔓 Déconnexion
-        </button>
+      <div className="text-center mt-4">
+        <button className="btn btn-link text-muted" onClick={() => signOut(auth)}>🔓 Déconnexion</button>
       </div>
     </div>
   );
