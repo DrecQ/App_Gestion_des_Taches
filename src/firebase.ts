@@ -4,8 +4,9 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getMessaging } from 'firebase/messaging';
 
-const firebaseConfig = {
-    apiKey: "AIzaSyAUl0-w6bDNidbnpuHrRjehpBn-nendIys",
+
+  const firebaseConfig = {
+  apiKey: "AIzaSyAUl0-w6bDNidbnpuHrRjehpBn-nendIys",
     authDomain: "gestion-taches-da5b2.firebaseapp.com",
     projectId: "gestion-taches-da5b2",
     storageBucket: "gestion-taches-da5b2.firebasestorage.app",
@@ -14,9 +15,11 @@ const firebaseConfig = {
     measurementId: "G-NV4XX5QP45"
   };
   
-
-const app = initializeApp(firebaseConfig);
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-export const messaging = getMessaging(app);
+export const vapidKey = "BM7NUMha-nLCJLSwxNUHuent3lmyGl9oL0tgKVVFiIdmfFKxTEY5qrzR7AWeRdWB7JDzCDq_Qt0eYuG6PR-AAaY";
+export const messaging = getMessaging(app); // 👈 ajouter la messagerie
+

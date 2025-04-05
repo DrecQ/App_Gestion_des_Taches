@@ -4,6 +4,7 @@ import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "./firebase";
 import Auth from "./components/Auth";
 import TaskManager from "./components/TaskManager";
+import NotificationSetup from "./components/NotificationSetup";
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -22,7 +23,12 @@ const App: React.FC = () => {
 
   return (
     <>
-      {!user ? <Auth /> : <TaskManager />}
+      {!user ? <Auth /> : (
+        <>
+          <NotificationSetup /> {/* 👈 Assurez-vous que ce composant est importé */}
+          <TaskManager />
+        </>
+      )}
     </>
   );
 };
