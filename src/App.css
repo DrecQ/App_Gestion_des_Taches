@@ -1,0 +1,137 @@
+/* TodoApp.css */
+
+body {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.app-container {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 200px;
+  background-color: #f0f0f0;
+  padding: 1rem;
+}
+
+.main-content {
+  flex: 1;
+  padding: 1rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.task-list {
+  list-style: none;
+  padding: 0;
+}
+
+.task-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.task-item:last-child {
+  border-bottom: none;
+}
+
+/* Formulaire d'ajout de tâche (centré) */
+.task-form {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.task-form input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.task-form button {
+  padding: 10px 20px;
+  margin-right: 10px;
+}
+
+/* Message de tâche terminée */
+.task-completed-message {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #d4edda;
+  color: #155724;
+  padding: 10px 20px;
+  border: 1px solid #c3e6cb;
+}
+
+/* Bouton "+" pour ajouter une tâche */
+.add-task-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Formulaire d'ajout de tâche (page séparée) */
+.add-task-form {
+  padding: 20px;
+}
+
+.add-task-form h2 {
+  margin-bottom: 20px;
+}
+
+.add-task-form .form-group {
+  margin-bottom: 15px;
+}
+
+.add-task-form label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.add-task-form input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Sélecteur de date */
+.date-picker-container {
+  position: relative;
+}
+
+.date-picker-container input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.date-picker-container .react-datepicker-wrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
