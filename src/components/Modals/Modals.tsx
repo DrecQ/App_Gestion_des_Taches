@@ -113,9 +113,9 @@ export const NotificationsModal = ({
             <ul className="notifications-list">
               {notifications.map(notification => (
                 <li 
-                  key={notification.id} 
+                  key={notification.id || Math.random().toString()} 
                   className={`notification-item ${notification.read ? 'read' : 'unread'}`}
-                  onClick={() => onMarkAsRead(notification.id)}
+                  onClick={() => notification.id && onMarkAsRead(notification.id)}
                 >
                   <div className="notification-header">
                     <div className="notification-title-wrapper">
@@ -131,16 +131,18 @@ export const NotificationsModal = ({
                       )}
                     </div>
                     <span className="notification-time">
-                      {new Date(notification.timestamp).toLocaleString('fr-FR', {
+                      {notification.timestamp ? new Date(notification.timestamp).toLocaleString('fr-FR', {
                         day: 'numeric',
                         month: 'short',
                         year: 'numeric',
                         hour: '2-digit',
                         minute: '2-digit'
-                      })}
+                      }) : 'Date inconnue'}
                     </span>
                   </div>
-                  <p className="notification-message">{notification.message}</p>
+                  <p className="notification-message">
+                    {'message' in notification ? (notification as any).message : notification.body || ''}
+                  </p>
                   {notification.data?.url && (
                     <a 
                       href={notification.data.url} 

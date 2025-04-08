@@ -5,6 +5,8 @@ import './Login.css';
 
 
 interface User {
+  gender: any;
+  profession: any;
   username: string;
   email: string;
   password: string;
@@ -21,20 +23,27 @@ const Login = () => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
-
+  
     try {
       // Simulation de vérification avec délai
       await new Promise(resolve => setTimeout(resolve, 500));
       
       const users: User[] = JSON.parse(localStorage.getItem('users') || '[]');
+      
+      // Recherche de l'utilisateur avec email et mot de passe
       const foundUser = users.find(u => u.email === email && u.password === password);
       
       if (foundUser) {
+        // Enregistrement de l'utilisateur connecté dans le localStorage
         localStorage.setItem('currentUser', JSON.stringify({
           name: foundUser.username,
           email: foundUser.email,
-          lastLogin: new Date().toISOString()
+          profession: foundUser.profession, // Ajout de la profession
+          gender: foundUser.gender, // Ajout du genre
+          lastLogin: new Date().toISOString() // Date de dernière connexion
         }));
+  
+        // Redirection vers la page d'accueil ou tableau de bord
         navigate('/');
       } else {
         setError('Identifiants incorrects');
@@ -46,6 +55,7 @@ const Login = () => {
       setIsLoading(false);
     }
   };
+  
 
   const handleUserLogin = () => {
     // Simulation OAuth avec redirection

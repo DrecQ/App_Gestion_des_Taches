@@ -48,16 +48,16 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
+  
     if (!validateForm()) {
       setIsLoading(false);
       return;
     }
-
+  
     try {
       // Simulation de traitement asynchrone
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+  
       const newUser = {
         username: formData.username,
         email: formData.email,
@@ -66,22 +66,20 @@ const Register = () => {
         gender: formData.gender,
         createdAt: new Date().toISOString()
       };
-
+  
       const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
-      
+  
       // Vérifier si l'email existe déjà
       if (existingUsers.some((user: any) => user.email === formData.email)) {
         setErrors({ email: 'Cet email est déjà utilisé' });
         return;
       }
-
+  
+      // Sauvegarder l'utilisateur dans le localStorage sans le connecter directement
       localStorage.setItem('users', JSON.stringify([...existingUsers, newUser]));
-      localStorage.setItem('currentUser', JSON.stringify({
-        name: formData.username,
-        email: formData.email
-      }));
-      
-      navigate('/');
+  
+      // Naviguer vers la page de connexion ou une autre page
+      navigate('/login');
     } catch (error) {
       console.error("Erreur d'inscription:", error);
       setErrors({ email: "Une erreur s'est produite" });
@@ -89,7 +87,7 @@ const Register = () => {
       setIsLoading(false);
     }
   };
-
+  
   const handleGoogleSignup = () => {
     setIsLoading(true);
     // Simulation de l'inscription Google

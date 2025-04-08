@@ -82,7 +82,7 @@ const TodoApp = () => {
     const newNotification: Notification = {
       id: Date.now().toString(),
       title,
-      message,
+      body: message,
       read: false,
       timestamp: new Date(),
       type,
