@@ -55,3 +55,22 @@ export const requestForToken = () => {
             console.log('An error occurred while retrieving token. ', err);
         });
 };
+
+export function requestPermission() {
+    return messaging.requestPermission()
+        .then(() => {
+            console.log('Notification permission granted.');
+            return messaging.getToken();
+        })
+        .catch((error) => {
+            console.error('Unable to get permission to notify.', error);
+        });
+}
+
+export function onMessageListener() {
+    return new Promise((resolve) => {
+        messaging.onMessage((payload) => {
+            resolve(payload);
+        });
+    });
+}
