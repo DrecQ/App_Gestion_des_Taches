@@ -6,15 +6,17 @@
     "@fortawesome/fontawesome-free": "^6.7.2",
     "@heroicons/react": "^2.2.0",
     "@iconscout/react-unicons": "^2.2.4",
+    "@notifee/react-native": "^9.1.8",
+    "@react-native-firebase/messaging": "^21.13.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.126",
-    "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
     "bootstrap": "^5.3.3",
+    "firebase-admin": "^13.2.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-scripts": "5.0.1",
@@ -46,6 +48,7 @@
     ]
   },
   "devDependencies": {
+    "@types/react": "^19.1.0",
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.3",
     "tailwindcss": "^4.0.17"
