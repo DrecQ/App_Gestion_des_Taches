@@ -3,23 +3,26 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^6.7.2",
-    "@heroicons/react": "^2.2.0",
-    "@iconscout/react-unicons": "^2.2.4",
-    "@notifee/react-native": "^9.1.8",
-    "@react-native-firebase/messaging": "^21.13.0",
+    "@react-firebase/auth": "^0.2.10",
+    "@react-firebase/firestore": "^0.5.5",
+
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.126",
-    "@types/react-dom": "^19.0.4",
+    "@types/react-toastify": "^4.0.2",
     "bootstrap": "^5.3.3",
-    "firebase-admin": "^13.2.0",
+    "firebase": "^11.6.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-hot-toast": "^2.5.2",
+    "react-icons": "^5.5.0",
+    "react-router": "^7.4.1",
+    "react-router-dom": "^7.4.1",
     "react-scripts": "5.0.1",
+    "react-toastify": "^11.0.5",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
@@ -49,6 +52,8 @@
   },
   "devDependencies": {
     "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.1",
+
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.3",
     "tailwindcss": "^4.0.17"

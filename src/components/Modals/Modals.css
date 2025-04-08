@@ -1,0 +1,339 @@
+/* Modals.css */
+
+/* Styles de base pour les overlays */
+.share-modal-overlay,
+.notifications-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 5%;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Contenu principal des modales */
+.share-modal-content,
+.notifications-modal-content {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  transform: translateY(0);
+  transition: transform 0.3s ease;
+  position: relative;
+}
+
+/* Animation d'entrée */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* En-tête des modales */
+.share-modal-content h3,
+.notifications-modal-content h3 {
+  padding: 20px;
+  margin: 0;
+  color: #2d3436;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.25rem;
+}
+
+/* Icônes dans les titres */
+.share-modal-content h3 i,
+.notifications-modal-content h3 i {
+  color: #6c5ce7;
+}
+
+/* Groupe d'entrée partage */
+.share-input-group {
+  display: flex;
+  padding: 20px;
+  gap: 10px;
+}
+
+.share-input-group input {
+  flex: 1;
+  padding: 12px 15px;
+  border: 1px solid #dfe6e9;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: border-color 0.3s;
+}
+
+.share-input-group input:focus {
+  outline: none;
+  border-color: #6c5ce7;
+  box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.2);
+}
+
+.share-input-group button {
+  background-color: #6c5ce7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.share-input-group button:disabled {
+  background-color: #b2bec3;
+  cursor: not-allowed;
+}
+
+.share-input-group button:hover:not(:disabled) {
+  background-color: #5649c0;
+}
+
+/* Section utilisateurs partagés */
+.shared-users-section {
+  padding: 0 20px;
+}
+
+.shared-users-section h4 {
+  margin: 0 0 15px 0;
+  color: #636e72;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.shared-users-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+}
+
+.shared-users-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #2d3436;
+}
+
+.user-info i {
+  color: #74b9ff;
+  font-size: 1.2rem;
+}
+
+.remove-access-btn {
+  background: none;
+  border: none;
+  color: #ff7675;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.remove-access-btn:hover {
+  background-color: rgba(255, 118, 117, 0.1);
+}
+
+/* Styles pour les notifications */
+.notifications-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notifications-list li {
+  padding: 15px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.notifications-list li.unread {
+  background-color: #f8f5ff;
+}
+
+.notifications-list li.read {
+  opacity: 0.8;
+}
+
+.notifications-list li:hover {
+  background-color: #f0f0f0;
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.notification-header h4 {
+  margin: 0;
+  color: #2d3436;
+  font-size: 1rem;
+}
+
+.notification-time {
+  color: #b2bec3;
+  font-size: 0.8rem;
+}
+
+.notifications-list p {
+  margin: 0;
+  color: #636e72;
+  font-size: 0.9rem;
+}
+
+/* État vide */
+.no-notifications {
+  padding: 40px 20px;
+  text-align: center;
+  color: #b2bec3;
+}
+
+.no-notifications i {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  color: #dfe6e9;
+}
+
+.no-notifications p {
+  margin: 0;
+}
+
+/* Boutons d'action */
+.clear-notifications-btn,
+.close-modal-btn {
+  width: calc(100% - 40px);
+  margin: 20px;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.clear-notifications-btn {
+  background-color: #f8f9fa;
+  color: #ff7675;
+}
+
+.clear-notifications-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.clear-notifications-btn:hover:not(:disabled) {
+  background-color: #ffefef;
+}
+
+.close-modal-btn {
+  background-color: #6c5ce7;
+  color: white;
+}
+
+.close-modal-btn:hover {
+  background-color: #5649c0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .share-modal-overlay,
+  .notifications-modal-overlay {
+    padding-top: 10%;
+    align-items: flex-start;
+  }
+  
+  .share-modal-content,
+  .notifications-modal-content {
+    width: 95%;
+    max-height: 85vh;
+  }
+  
+  .share-input-group {
+    flex-direction: column;
+  }
+  
+  .share-input-group button {
+    padding: 12px;
+  }
+}
+
+/* Ajouts pour les nouvelles fonctionnalités
+.notification-icon {
+  margin-right: 8px;
+  color: inherit;
+}
+
+.notification-type {
+  font-size: 0.8em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+  background: #eee;
+}
+
+.notification-type.task {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.notification-type.share {
+  background: #e8f5e9;
+  color: #388e3c;
+}
+
+.notification-type.system {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.permission-badge {
+  font-size: 0.8em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.notification-link {
+  display: inline-block;
+  margin-top: 8px;
+  color: #1976d2;
+  text-decoration: none;
+}
+
+.notification-link:hover {
+  text-decoration: underline;
+} */
