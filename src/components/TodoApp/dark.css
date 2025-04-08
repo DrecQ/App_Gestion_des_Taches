@@ -39,11 +39,11 @@
     --notification-badge: #ff6b6b;
   }
   
-  /* .dark {
+  .dark {
     --bg-color: #1a202c;
-    --text-color: #f7fafc;
+    --text-color: #2e3236;
     --sidebar-bg: #2d3748;
-    --border-color: #4a5568;
+    --border-color: #c34545;
     --primary-color: #63b3ed;
     --hover-color: #4a5568;
     --completed-color: #a0aec0;
@@ -51,7 +51,7 @@
     --error-color: #fc8181;
     --notification-badge: #f56565;
   }
-  
+  /*
   Assurez-vous que tous vos éléments utilisent ces variables CSS */
   /* .todo-app-container {
     background-color: var(--bg-color);
