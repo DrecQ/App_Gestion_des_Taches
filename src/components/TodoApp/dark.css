@@ -1,0 +1,69 @@
+/* Styles pour le bouton de basculement du mode sombre */
+.dark-mode-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    transition: all 0.3s ease;
+  }
+  
+  .dark-mode-toggle:hover {
+    transform: scale(1.1);
+  }
+  
+  .dark-mode-toggle i {
+    font-size: 1.2rem;
+  }
+  
+  /* Styles globaux pour le mode sombre */
+  :root {
+    --bg-color: #ffffff;
+    --text-color: #333333;
+    --sidebar-bg: #f8f9fa;
+    --border-color: #ddd;
+    --primary-color: #4a6fa5;
+    --hover-color: #e9ecef;
+    --completed-color: #868e96;
+    --important-color: #e67700;
+    --error-color: #fa5252;
+    --notification-badge: #ff6b6b;
+  }
+  
+  /* .dark {
+    --bg-color: #1a202c;
+    --text-color: #f7fafc;
+    --sidebar-bg: #2d3748;
+    --border-color: #4a5568;
+    --primary-color: #63b3ed;
+    --hover-color: #4a5568;
+    --completed-color: #a0aec0;
+    --important-color: #f6ad55;
+    --error-color: #fc8181;
+    --notification-badge: #f56565;
+  }
+  
+  Assurez-vous que tous vos éléments utilisent ces variables CSS */
+  /* .todo-app-container {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+  }
+  
+  .sidebar {
+    background-color: var(--sidebar-bg);
+  }
+  
+  .todo-item {
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  ... (ajoutez var() aux autres éléments selon vos besoins) ... */

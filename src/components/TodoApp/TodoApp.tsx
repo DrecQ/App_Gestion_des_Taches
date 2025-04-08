@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Notification, SharedUser, Todo, User } from '../../types/types';
 import { ShareModal, NotificationsModal } from '../Modals/Modals';
 import './TodoApp.css';
+import './dark.css';
 
 const TodoApp = () => {
   const navigate = useNavigate();
@@ -20,6 +21,33 @@ const TodoApp = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [inputError, setInputError] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
+  // Gestion du mode sombre
+  const [darkMode, setDarkMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    return false;
+  });
+
+  // Appliquer le mode sombre
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
+
+  // Écouter les changements de préférence système
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e: MediaQueryListEvent) => setDarkMode(e.matches);
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  const toggleDarkMode = () => setDarkMode(!darkMode);
 
   // Chargement des données
   useEffect(() => {
@@ -56,19 +84,14 @@ const TodoApp = () => {
       const sidebar = document.querySelector('.sidebar');
       const hamburger = document.querySelector('.hamburger-menu');
       
-      if (isMobileMenuOpen && 
-          sidebar && 
-          !sidebar.contains(event.target as Node) && 
-          hamburger &&
-          !hamburger.contains(event.target as Node)) {
+      if (isMobileMenuOpen && sidebar && !sidebar.contains(event.target as Node) && 
+          hamburger && !hamburger.contains(event.target as Node)) {
         setIsMobileMenuOpen(false);
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isMobileMenuOpen]);
 
   // Gestion des notifications
@@ -247,6 +270,19 @@ const TodoApp = () => {
 
   return (
     <div className="todo-app-container">
+      {/* Bouton de basculement du mode sombre */}
+      <button 
+        onClick={toggleDarkMode}
+        className="dark-mode-toggle"
+        aria-label={darkMode ? 'Désactiver le mode sombre' : 'Activer le mode sombre'}
+      >
+        {darkMode ? (
+          <i className="fas fa-sun" title="Mode clair"></i>
+        ) : (
+          <i className="fas fa-moon" title="Mode sombre"></i>
+        )}
+      </button>
+
       <button 
         className="hamburger-menu"
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

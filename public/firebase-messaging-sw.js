@@ -1,77 +1,36 @@
-import { onMessageListener } from "../../firebase/firebase";
-import { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
-import { NotificationPayload} from '../../types/types';
+// eslint-disable-next-line no-undef
+importScripts('https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js');
+// eslint-disable-next-line no-undef
+importScripts('https://www.gstatic.com/firebasejs/9.1.3/firebase-messaging.js');
 
-// interface NotificationPayload {
-//   notification?: {
-//     title: string;
-//     body: string;
-//   };
-//   // autres champs si nécessaire
-// }
+// ✅ Configuration Firebase avec les VRAIES VALEURS (pas de process.env ici)
+const firebaseConfig = {
+  apiKey: "AIzaSyCi5aj3n6dZ4dZMb-whwkoA5u0hXllFyds",
+  authDomain: "gestiontachenotifs.firebaseapp.com",
+  projectId: "gestiontachenotifs",
+  storageBucket: "gestiontachenotifs.firebasestorage.app",
+  messagingSenderId: "986544092877",
+  appId: "1:986544092877:web:471f92268182cf6f08db84",
+  measurementId: "G-K8Q9YEMRGY"
+};
 
-import { useState, useEffect } from "react";
-import { toast } from "react-hot-toast";
-import { onMessageListener } from "../../firebase/firebase";
+// Initialiser Firebase
+// eslint-disable-next-line no-undef
+firebase.initializeApp(firebaseConfig);
 
-// Interface pour le payload de la notification
-interface NotificationPayload {
-  notification?: {
-    title: string;
-    body: string;
+// Initialiser Firebase Messaging
+// eslint-disable-next-line no-undef
+const messaging = firebase.messaging();
+
+// Gérer les messages en arrière-plan
+messaging.onBackgroundMessage(function(payload) {
+  console.log('📩 Message en arrière-plan reçu : ', payload);
+  const notificationTitle = payload.notification?.title || "Notification";
+  const notificationOptions = {
+    body: payload.notification?.body || "Nouveau message",
+    icon: "/firebase-logo.png",
   };
-}
 
-const Notification = () => {
-  const [notificationState, setNotificationState] = useState<{ title?: string; body?: string }>({});
-
-  useEffect(() => {
-    // Utilisation correcte de onMessageListener pour écouter les messages
-    function handleMessage(payload: NotificationPayload) {
-      setNotificationState({
-        title: payload?.notification?.title,
-        body: payload?.notification?.body,
-      });
-
-      if (payload?.notification) {
-        toast.success(`${payload.notification.title}: ${payload.notification.body}`, {
-          duration: 60000,
-          position: 'top-right',
-        });
-      }
-    }
-
-    // Appel de onMessageListener
-    const unsubscribe = onMessageListener().then((payload: NotificationPayload) => {
-      handleMessage(payload);
-    });
-
-    // Nettoyage
-    return () => {
-      unsubscribe.catch(err => console.error('Error during unsubscription:', err));
-    };
-  }, []);
-
-  return null; // ou ton JSX si tu veux afficher quelque chose
-};
-
-export { Notification };
-
-    // On s'abonne aux notifications
-    const unsubscribe = onMessageListener().then(handleMessage).catch((err) => {
-      console.log("Error receiving message: ", err);
-    });
-
-    // Fonction de nettoyage pour la désinscription ou autres actions de nettoyage
-    return () => {
-      unsubscribe?.catch((err) => {
-        console.log("Error unsubscribing from message listener: ", err);
-      });
-    };
-  }, []);
-
-  return null; // ou votre JSX
-};
-
-export default Notification;
+  // eslint-disable-next-line no-restricted-globals
+  self.registration.showNotification(notificationTitle, notificationOptions);
+});

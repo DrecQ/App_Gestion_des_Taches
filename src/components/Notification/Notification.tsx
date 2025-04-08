@@ -4,47 +4,48 @@ import { onMessageListener, requestPermission } from '../../firebase/firebase';
 import { FirebaseMessagePayload } from '../../types/types';
 
 function Notification() {
-  const [notification, setNotification] = useState({ title: '', body: '' });
+  const [notification, setNotification] = useState<{ title: string; body: string }>({
+    title: '',
+    body: '',
+  });
 
   useEffect(() => {
-    // Demander la permission à l'utilisateur
+    // Demander la permission à l'utilisateur pour les notifications
     requestPermission();
-
-    // Fonction pour souscrire à la notification
-    const subscribeToNotifications = async () => {
-      try {
-        const payload = await onMessageListener();  // Attendre la réponse de la promesse
-
-        // Cast explicite du type de payload
-        const typedPayload = payload as FirebaseMessagePayload;
-
-        setNotification({
-          title: typedPayload.notification.title,
-          body: typedPayload.notification.body,
+  
+    // Souscrire à la notification en utilisant le onMessageListener
+    const subscribeToMessages = () => {
+      onMessageListener()
+        .then((payload: FirebaseMessagePayload) => {
+          console.log("Received message: ", payload);  // Ajout d'un log pour vérifier les messages
+          setNotification({
+            title: payload.notification?.title || 'No title',
+            body: payload.notification?.body || 'No body',
+          });
+  
+          // Afficher une notification toast
+          toast.success(`${payload.notification?.title}: ${payload.notification?.body}`, {
+            duration: 60000,
+            position: 'top-right',
+          });
+        })
+        .catch((error) => {
+          console.error('Error receiving message: ', error);
         });
-
-        // Afficher une notification toast
-        toast.success(`${typedPayload.notification.title}: ${typedPayload.notification.body}`, {
-          duration: 60000,
-          position: 'top-right',
-        });
-      } catch (err) {
-        console.error('Erreur lors de la réception de la notification: ', err);
-      }
     };
-
-    subscribeToNotifications();
-
-    // Retourner une fonction de nettoyage pour annuler l'abonnement
+  
+    // Souscrire aux messages lorsque le composant est monté
+    subscribeToMessages();
+  
     return () => {
-      // Si nécessaire, ajoutez ici le nettoyage d'abonnement Firebase
+      // Aucune fonction de nettoyage n'est nécessaire ici pour onMessageListener
     };
-  }, []); // Le tableau vide [] signifie que ce code ne s'exécutera qu'une seule fois après le montage du composant
+  }, []);
 
   return (
     <div>
       <Toaster />
-      {/* Affichage de la notification */}
+      {/* Affichage de la notification dans le composant */}
       <div>
         <h1>{notification.title}</h1>
         <p>{notification.body}</p>

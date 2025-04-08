@@ -96,10 +96,11 @@ export interface FirebaseDocument {
   updatedAt: number;
 }
 
-interface NotificationPayload {
+export interface NotificationPayload {
   notification?: {
     title: string;
     body: string;
   };
   // autres champs si nécessaire
 }
+
